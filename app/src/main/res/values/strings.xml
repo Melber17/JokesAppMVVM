@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">JokesAppMVVM</string>
+    <string name="get_joke">Get Joke</string>
 </resources>
