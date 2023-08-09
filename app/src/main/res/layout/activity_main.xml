@@ -17,7 +17,8 @@
     <ProgressBar
         android:id="@+id/progressBar"
         android:visibility="invisible"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/material_dynamic_primary80"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <Button
