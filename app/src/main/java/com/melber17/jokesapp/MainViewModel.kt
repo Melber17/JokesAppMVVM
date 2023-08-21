@@ -3,6 +3,17 @@ package com.melber17.jokesapp
 
 class MainViewModel(private val model: Model<Joke, Error>) {
     private var textCallback: TextCallback = TextCallback.Empty()
+
+    private val resultCallback = object : ResultCallback<Joke, Error> {
+        override fun provideSuccess(data: Joke) {
+            textCallback.provideText(data.toUi())
+        }
+
+        override fun provideError(error: Error) {
+            textCallback.provideText(error.message())
+        }
+    }
+
     fun getJoke() {
         model.fetch()
     }
@@ -14,15 +25,7 @@ class MainViewModel(private val model: Model<Joke, Error>) {
 
     fun init(textCallback: TextCallback) {
         this.textCallback = textCallback
-        model.init(object: ResultCallback<Joke, Error> {
-            override fun provideSuccess(data: Joke) {
-              textCallback.provideText(data.toUi())
-            }
-            override fun provideError(error: Error) {
-             textCallback.provideText(error.message())
-            }
-
-        })
+        model.init(resultCallback)
     }
 
 }
