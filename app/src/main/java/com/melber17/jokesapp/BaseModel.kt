@@ -1,5 +1,9 @@
 package com.melber17.jokesapp
 
+import retrofit2.Call
+import retrofit2.Response
+import java.net.UnknownHostException
+
 class BaseModel(
     private val jokeService: JokeService,
     private val manageResources: ManageResources
@@ -8,20 +12,24 @@ class BaseModel(
     private val noConnection by lazy { Error.NoConnection(manageResources) }
     private val serviceError by lazy { Error.ServiceUnavailable(manageResources) }
     override fun fetch() {
-        jokeService.joke(object : ServiceCallback {
-            override fun returnSuccess(data: String) {
-                callback?.provideSuccess(Joke(data, ""))
+        jokeService.joke().enqueue(object: retrofit2.Callback<JokeCloud> {
+            override fun onResponse(call: Call<JokeCloud>, response: Response<JokeCloud>) {
+                if (response.isSuccessful) {
+                    callback?.provideSuccess(response.body()!!.toJoke())
+                } else {
+                    callback?.provideError(serviceError)
+                }
             }
 
-            override fun returnError(errorType: ErrorType) {
-                when (errorType) {
-                    ErrorType.NO_CONNECTION -> callback?.provideError(noConnection)
-                    ErrorType.OTHER -> callback?.provideError(serviceError)
+            override fun onFailure(call: Call<JokeCloud>, t: Throwable) {
+                if (t is UnknownHostException || t is java.net.ConnectException) {
+                    callback?.provideError(noConnection)
+                } else {
+                    callback?.provideError(serviceError)
                 }
             }
 
         })
-
     }
 
     override fun clear() {
