@@ -15,7 +15,7 @@ class FakeModel(
      java.util.Timer().schedule(object: TimerTask() {
          override fun run() {
              if (count % 2 == 1 ) {
-                 callback?.provideSuccess(Joke("fake joke $count", "punchline"))
+                 callback?.provideSuccess(Joke.Base("fake joke $count", "punchline"))
              } else if (count % 3 == 0) {
                  callback?.provideError(noConnection)
              } else {

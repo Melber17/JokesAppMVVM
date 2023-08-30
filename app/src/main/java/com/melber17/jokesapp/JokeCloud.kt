@@ -14,6 +14,6 @@ data class JokeCloud(
 ) {
 
     fun toJoke(): Joke {
-        return Joke(mainText, punchline)
+        return Joke.Base(mainText, punchline)
     }
 }

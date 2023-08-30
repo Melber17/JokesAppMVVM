@@ -2,9 +2,9 @@ package com.melber17.jokesapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import com.melber17.jokesapp.databinding.ActivityMainBinding
-import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
@@ -15,6 +15,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         viewModel = (application as JokeApp).viewModel
+
+        binding.showFavoriteCheckBox.setOnCheckedChangeListener { _, isChecked ->
+           viewModel.changeFavorite(isChecked)
+        }
+
+        binding.favoriteButton.setOnClickListener {
+            // TODO
+        }
 
         binding.actionButton.setOnClickListener {
             binding.actionButton.isEnabled = false
@@ -28,6 +36,11 @@ class MainActivity : AppCompatActivity() {
                 binding.progressBar.visibility = View.INVISIBLE
                 binding.textViewJoke.text = text
             }
+
+            override fun provideIconResId(iconResId: Int) = runOnUiThread() {
+                binding.favoriteButton.setImageResource(iconResId)
+            }
+
         })
     }
 
