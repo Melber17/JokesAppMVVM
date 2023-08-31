@@ -22,7 +22,9 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
         <ImageButton
             android:id="@+id/favoriteButton"
@@ -42,6 +44,7 @@
     <Button
         android:id="@+id/actionButton"
         android:layout_width="wrap_content"
+        android:minWidth="200dp"
         android:layout_height="wrap_content"
         android:text="@string/get_joke" />
 </LinearLayout>

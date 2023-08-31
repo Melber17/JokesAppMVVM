@@ -17,6 +17,10 @@ class MainViewModelTest {
                 assertEquals("$SUCCESS_MESSAGE\npunchline", text)
             }
 
+            override fun provideIconResId(iconResId: Int) {
+                assertEquals(R.drawable.ic_favorite_filled_48, iconResId)
+            }
+
         })
         viewModel.getJoke()
     }
@@ -31,6 +35,9 @@ class MainViewModelTest {
                 assertEquals(ERROR_MESSAGE, text)
             }
 
+            override fun provideIconResId(iconResId: Int) {
+                assertEquals(R.drawable.ic_favorite_empty_48, iconResId)
+            }
         })
         viewModel.getJoke()
     }
@@ -41,7 +48,7 @@ private class FakeModel() : Model<Joke, Error> {
     private var callback: ResultCallback<Joke, Error>? = null
     override fun fetch() {
         if (returnSuccess) {
-            callback?.provideSuccess(Joke(SUCCESS_MESSAGE, "punchline"))
+            callback?.provideSuccess(Joke.Base(SUCCESS_MESSAGE, "punchline"))
         } else {
             callback?.provideError(FakeError())
         }
