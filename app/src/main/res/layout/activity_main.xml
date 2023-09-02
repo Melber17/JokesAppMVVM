@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".presentation.MainActivity">
     <CheckBox
         android:id="@+id/showFavoriteCheckBox"
         android:text="@string/show_favorite_joke"

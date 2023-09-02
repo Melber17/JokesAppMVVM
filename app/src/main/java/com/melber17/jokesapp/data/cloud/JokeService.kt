@@ -1,4 +1,4 @@
-package com.melber17.jokesapp
+package com.melber17.jokesapp.data.cloud
 
 import retrofit2.Call
 import retrofit2.http.GET

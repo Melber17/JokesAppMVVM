@@ -1,6 +1,8 @@
-package com.melber17.jokesapp
+package com.melber17.jokesapp.data
 
 import androidx.annotation.StringRes
+import com.melber17.jokesapp.presentation.ManageResources
+import com.melber17.jokesapp.R
 
 
 interface Error {

@@ -1,9 +1,9 @@
-package com.melber17.jokesapp
+package com.melber17.jokesapp.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import com.melber17.jokesapp.JokeApp
 import com.melber17.jokesapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.favoriteButton.setOnClickListener {
-            // TODO
+           viewModel.changeJokeStatus()
         }
 
         binding.actionButton.setOnClickListener {
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
             viewModel.getJoke()
         }
 
-        viewModel.init(object: TextCallback {
+        viewModel.init(object: JokeUICallback {
             override fun provideText(text: String) = runOnUiThread() {
                 binding.actionButton.isEnabled = true
                 binding.progressBar.visibility = View.INVISIBLE
