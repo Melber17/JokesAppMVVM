@@ -26,7 +26,10 @@ class JokeApp : Application() {
                     retrofit.create(JokeService::class.java),
                     ManageResources.Base(this)
                 ),
-                CacheDataSource.Fake()
+                CacheDataSource.Fake(
+                    ManageResources.Base(this)
+                ),
+                ManageResources.Base(this)
             )
         )
 

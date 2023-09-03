@@ -22,4 +22,7 @@ interface Error {
 
     class ServiceUnavailable(private val manageResources: ManageResources) :
         Abstract(manageResources, R.string.service_unavailable_message)
+
+    class NoFavoriteJoke(private val manageResources: ManageResources) :
+        Abstract(manageResources, R.string.no_favorite_joke)
 }

@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         viewModel = (application as JokeApp).viewModel
 
         binding.showFavoriteCheckBox.setOnCheckedChangeListener { _, isChecked ->
-           viewModel.changeFavorite(isChecked)
+           viewModel.chooseFavorite(isChecked)
         }
 
         binding.favoriteButton.setOnClickListener {

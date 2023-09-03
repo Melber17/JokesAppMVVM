@@ -28,8 +28,8 @@ class MainViewModel(private val repository: Repository<JokeUi, Error>) {
         repository.init(resultCallback)
     }
 
-    fun changeFavorite(isChecked: Boolean) {
-        repository.changeJokeStatus(resultCallback)
+    fun chooseFavorite(isFavorite: Boolean) {
+        repository.chooseFavorites(isFavorite)
     }
 
     fun changeJokeStatus() {

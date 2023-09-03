@@ -36,6 +36,10 @@ class FakeRepository(
         // todo
     }
 
+    override fun chooseFavorites(isFavorite: Boolean) {
+        // todo
+    }
+
     override fun init(resultCallback: ResultCallback<JokeUi, Error>) {
        callback = resultCallback
     }

@@ -1,5 +1,6 @@
 package com.melber17.jokesapp.data.cloud
 
+import com.melber17.jokesapp.data.cache.ProvideError
 import com.melber17.jokesapp.presentation.ManageResources
 import retrofit2.Call
 import retrofit2.Response
@@ -53,7 +54,6 @@ interface CloudDataSource {
     }
 }
 
-interface JokeCloudCallback {
+interface JokeCloudCallback: ProvideError {
     fun provideJokeCloud(jokeCloud: JokeCloud)
-    fun provideError(error: com.melber17.jokesapp.data.Error)
 }

@@ -9,6 +9,7 @@ interface Repository<S, E> {
     fun clear()
     fun init(callback: ResultCallback<S, E>)
     fun changeJokeStatus(resultCallback: ResultCallback<JokeUi, Error>)
+    fun chooseFavorites(isFavorite: Boolean)
 }
 
 interface ResultCallback<S, E> {
