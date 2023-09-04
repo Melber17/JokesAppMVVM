@@ -18,10 +18,12 @@ class BaseRepository(
     private var jokeCloudCached: JokeCloud? = null
     private var getJokeFromCache = false
 
+    @SuppressLint("SuspiciousIndentation")
     override fun fetch() {
         if (getJokeFromCache) {
           cacheDataSource.fetch(object: JokeCacheCallback {
                override fun provideJoke(joke: JokeCloud) {
+                   jokeCloudCached = joke
                    callback?.provideSuccess(joke.toFavoriteUi())
                }
 

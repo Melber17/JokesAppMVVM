@@ -2,6 +2,7 @@ package com.melber17.jokesapp.data.cloud
 
 import com.google.gson.annotations.SerializedName
 import com.melber17.jokesapp.data.cache.CacheDataSource
+import com.melber17.jokesapp.data.cache.JokeCache
 import com.melber17.jokesapp.presentation.JokeUi
 
 data class JokeCloud(
@@ -18,4 +19,13 @@ data class JokeCloud(
     fun toUi(): JokeUi = JokeUi.Base(mainText, punchline)
     fun toFavoriteUi(): JokeUi = JokeUi.Favorite(mainText, punchline)
     fun change(cacheDataSource: CacheDataSource): JokeUi = cacheDataSource.addOrRemove(id, this)
+    fun toCache(): JokeCache {
+        val jokeCache = JokeCache()
+        jokeCache.id = this.id
+        jokeCache.text = this.mainText
+        jokeCache.punchline = this.punchline
+        jokeCache.type = this.type
+
+        return jokeCache
+    }
 }

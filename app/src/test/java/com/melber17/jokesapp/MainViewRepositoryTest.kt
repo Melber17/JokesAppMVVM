@@ -6,6 +6,7 @@ import com.melber17.jokesapp.data.ResultCallback
 import com.melber17.jokesapp.presentation.JokeUi
 import com.melber17.jokesapp.presentation.MainViewModel
 import com.melber17.jokesapp.presentation.JokeUICallback
+import com.melber17.jokesapp.presentation.ManageResources
 import org.junit.Assert.*
 import org.junit.Test
 
