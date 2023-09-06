@@ -1,49 +1,42 @@
 package com.melber17.jokesapp.data
 
-import android.annotation.SuppressLint
 import com.melber17.jokesapp.data.cache.CacheDataSource
-import com.melber17.jokesapp.data.cache.JokeCacheCallback
+import com.melber17.jokesapp.data.cache.JokeCallback
 import com.melber17.jokesapp.data.cloud.CloudDataSource
-import com.melber17.jokesapp.data.cloud.JokeCloud
-import com.melber17.jokesapp.data.cloud.JokeCloudCallback
 import com.melber17.jokesapp.presentation.JokeUi
-import com.melber17.jokesapp.presentation.ManageResources
 
 class BaseRepository(
     private val cloudDataSource: CloudDataSource,
     private val cacheDataSource: CacheDataSource,
-    private val manageResources: ManageResources
+    private val change: Joke.Mapper<JokeUi> = Change(cacheDataSource)
 ) : Repository<JokeUi, Error> {
     private var callback: ResultCallback<JokeUi, Error>? = null
-    private var jokeCloudCached: JokeCloud? = null
+    private var jokeTemporary: Joke? = null
     private var getJokeFromCache = false
-
-    @SuppressLint("SuspiciousIndentation")
+    private val toFavorite = ToFavoriteUi()
+    private val toBaseUi = ToBaseUi()
+    private val jokeCacheCallback = BaseJokeCallback(toFavorite)
+    private val cloudCallback = BaseJokeCallback(toBaseUi)
     override fun fetch() {
         if (getJokeFromCache) {
-          cacheDataSource.fetch(object: JokeCacheCallback {
-               override fun provideJoke(joke: JokeCloud) {
-                   jokeCloudCached = joke
-                   callback?.provideSuccess(joke.toFavoriteUi())
-               }
-
-              override fun provideError(error: Error) {
-                  callback?.provideError(error)
-              }
-           })
+            cacheDataSource.fetch(jokeCacheCallback)
         } else
-        cloudDataSource.fetch(object : JokeCloudCallback {
-            override fun provideJokeCloud(jokeCloud: JokeCloud) {
-                jokeCloudCached = jokeCloud
-                callback?.provideSuccess(jokeCloud.toUi())
-            }
+            cloudDataSource.fetch(cloudCallback)
+    }
 
-            override fun provideError(error: Error) {
-                jokeCloudCached = null
-                callback?.provideError(error)
-            }
+    private inner class BaseJokeCallback(
+        private val mapper: Joke.Mapper<JokeUi>
+    ) : JokeCallback {
+        override fun provideJoke(joke: Joke) {
+            jokeTemporary = joke
+            callback?.provideSuccess(joke.map(mapper))
+        }
 
-        })
+        override fun provideError(error: Error) {
+            jokeTemporary = null
+            callback?.provideError(error)
+        }
+
     }
 
     override fun clear() {
@@ -51,17 +44,14 @@ class BaseRepository(
     }
 
     override fun changeJokeStatus(resultCallback: ResultCallback<JokeUi, Error>) {
-        jokeCloudCached?.let {
-            resultCallback.provideSuccess(it.change(cacheDataSource))
+        jokeTemporary?.let {
+            resultCallback.provideSuccess(it.map(change))
         }
     }
-
 
     override fun chooseFavorites(isFavorite: Boolean) {
         getJokeFromCache = isFavorite
     }
-
-
 
     override fun init(resultCallback: ResultCallback<JokeUi, Error>) {
         callback = resultCallback

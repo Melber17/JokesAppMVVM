@@ -36,7 +36,6 @@ class JokeApp : Application() {
                     },
                     ManageResources.Base(this)
                 ),
-                ManageResources.Base(this)
             )
         )
 

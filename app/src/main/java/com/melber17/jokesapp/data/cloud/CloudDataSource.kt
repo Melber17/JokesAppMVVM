@@ -1,14 +1,13 @@
 package com.melber17.jokesapp.data.cloud
 
-import com.melber17.jokesapp.data.cache.ProvideError
+import com.melber17.jokesapp.data.cache.DataSource
+import com.melber17.jokesapp.data.cache.JokeCallback
 import com.melber17.jokesapp.presentation.ManageResources
 import retrofit2.Call
 import retrofit2.Response
 import java.net.UnknownHostException
 
-interface CloudDataSource {
-
-    fun fetch(cloudCallback: JokeCloudCallback)
+interface CloudDataSource: DataSource {
 
     class Base(
         private val jokeService: JokeService,
@@ -25,21 +24,21 @@ interface CloudDataSource {
             )
         }
 
-        override fun fetch(cloudCallback: JokeCloudCallback) {
+        override fun fetch(jokeCallback: JokeCallback) {
             jokeService.joke().enqueue(object : retrofit2.Callback<JokeCloud> {
                 override fun onResponse(call: Call<JokeCloud>, response: Response<JokeCloud>) {
                     if (response.isSuccessful) {
                         val body = response.body()
                         if (body == null) {
-                            cloudCallback?.provideError(serviceError)
+                            jokeCallback?.provideError(serviceError)
                         } else
-                            cloudCallback?.provideJokeCloud(body)
+                            jokeCallback?.provideJoke(body)
                     } else
-                        cloudCallback?.provideError(serviceError)
+                        jokeCallback?.provideError(serviceError)
                 }
 
                 override fun onFailure(call: Call<JokeCloud>, t: Throwable) {
-                    cloudCallback?.provideError(
+                    jokeCallback?.provideError(
                         if (t is UnknownHostException || t is java.net.ConnectException) {
                             noConnection
                         } else {
@@ -54,6 +53,3 @@ interface CloudDataSource {
     }
 }
 
-interface JokeCloudCallback: ProvideError {
-    fun provideJokeCloud(jokeCloud: JokeCloud)
-}
