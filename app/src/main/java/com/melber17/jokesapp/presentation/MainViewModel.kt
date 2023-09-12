@@ -2,30 +2,36 @@ package com.melber17.jokesapp.presentation
 
 import androidx.annotation.DrawableRes
 import com.melber17.jokesapp.data.Error
+import com.melber17.jokesapp.data.Joke
 import com.melber17.jokesapp.data.Repository
-import com.melber17.jokesapp.data.ResultCallback
+import com.melber17.jokesapp.data.ToBaseUi
+import com.melber17.jokesapp.data.ToFavoriteUi
 
 
-class MainViewModel(private val repository: Repository<JokeUi, Error>) {
+class MainViewModel(
+    private val repository: Repository<JokeUi, Error>,
+    private val toFavorite: Joke.Mapper<JokeUi> = ToFavoriteUi(),
+    private val toBaseUi: Joke.Mapper<JokeUi> = ToBaseUi()
+) {
     private var jokeUICallback: JokeUICallback = JokeUICallback.Empty()
 
-    private val resultCallback = object : ResultCallback<JokeUi, Error> {
-        override fun provideSuccess(data: JokeUi) = data.show(jokeUICallback)
-        override fun provideError(error: Error) = JokeUi.Failed(error.message()).show(jokeUICallback)
-    }
 
-    fun getJoke() {
-        repository.fetch()
-    }
+    fun getJoke() =
+        Thread {
+            val result = repository.fetch()
+            if (result.isSuccessful()) {
+                result.map(if (result.toFavorite()) toFavorite else toBaseUi).show(jokeUICallback)
+            } else {
+                JokeUi.Failed(result.errorMessage()).show(jokeUICallback)
+            }
+        }.start()
 
     fun clear() {
         jokeUICallback = JokeUICallback.Empty()
-        repository.clear()
     }
 
     fun init(jokeUICallback: JokeUICallback) {
         this.jokeUICallback = jokeUICallback
-        repository.init(resultCallback)
     }
 
     fun chooseFavorite(isFavorite: Boolean) {
@@ -33,11 +39,11 @@ class MainViewModel(private val repository: Repository<JokeUi, Error>) {
     }
 
     fun changeJokeStatus() {
-      Thread {
-          repository.changeJokeStatus(resultCallback)
-      }.start()
+        Thread {
+            val jokeUi = repository.changeJokeStatus()
+            jokeUi.show(jokeUICallback)
+        }.start()
     }
-
 }
 
 interface JokeUICallback {
