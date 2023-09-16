@@ -9,13 +9,3 @@ interface JokeService  {
     fun joke(): Call<JokeCloud>
 }
 
-interface ServiceCallback {
-    fun returnSuccess(data: JokeCloud)
-
-    fun returnError(errorType: ErrorType)
-}
-
-enum class ErrorType {
-    NO_CONNECTION,
-    OTHER
-}

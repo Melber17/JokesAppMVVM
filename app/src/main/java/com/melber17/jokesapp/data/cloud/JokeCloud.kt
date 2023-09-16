@@ -13,5 +13,5 @@ data class JokeCloud(
     @SerializedName("id")
     private val id: Int
 ): Joke {
-    override fun <T> map(mapper: Joke.Mapper<T>): T = mapper.map(type, mainText, punchline, id)
+    override suspend fun <T> map(mapper: Joke.Mapper<T>): T = mapper.map(type, mainText, punchline, id)
 }

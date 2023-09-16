@@ -23,12 +23,12 @@ interface CloudDataSource : DataSource {
             )
         }
 
-        override fun fetch(): JokeResult {
-            return try {
+        override suspend fun fetch(): JokeResult =
+             try {
                 val response = jokeService.joke().execute()
                 JokeResult.Success(response.body()!!, false)
             } catch (error: Exception) {
-                return JokeResult.Failure(
+                JokeResult.Failure(
                     if (error is UnknownHostException || error is java.net.ConnectException) {
                         noConnection
                     } else {
@@ -38,5 +38,5 @@ interface CloudDataSource : DataSource {
             }
         }
     }
-}
+
 

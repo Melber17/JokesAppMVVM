@@ -6,8 +6,8 @@ import com.melber17.jokesapp.presentation.JokeUi
 
 interface Repository<S, E> {
 
-    fun fetch(): JokeResult
-    fun changeJokeStatus(): JokeUi
+    suspend fun fetch(): JokeResult
+    suspend fun changeJokeStatus(): JokeUi
     fun chooseFavorites(isFavorite: Boolean)
 }
 
