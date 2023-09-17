@@ -28,7 +28,7 @@ class MainViewModelTest {
         jokeUICallback = FakeJokeUiCallback()
         dispatcherList = FakeDispatchers()
 
-        viewModel = MainViewModel(repository, toFavoriteMapper, toBaseMapper, dispatcherList)
+        viewModel = MainViewModel(repository, toFavoriteMapper, toBaseMapper, HandleUi.Base(dispatcherList))
         viewModel.init(jokeUICallback)
     }
 
