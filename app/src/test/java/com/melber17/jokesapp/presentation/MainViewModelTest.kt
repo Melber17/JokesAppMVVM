@@ -6,7 +6,6 @@ import com.melber17.jokesapp.data.Repository
 import com.melber17.jokesapp.data.cache.JokeResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -28,7 +27,7 @@ class MainViewModelTest {
         jokeUICallback = FakeJokeUiCallback()
         dispatcherList = FakeDispatchers()
 
-        viewModel = MainViewModel(repository, toFavoriteMapper, toBaseMapper, HandleUi.Base(dispatcherList))
+        viewModel = MainViewModel(repository, toFavoriteMapper, toBaseMapper, FakeDispatchers())
         viewModel.init(jokeUICallback)
     }
 
