@@ -8,6 +8,7 @@ import com.melber17.jokesapp.data.Joke
 import com.melber17.jokesapp.data.Repository
 import com.melber17.jokesapp.data.ToBaseUi
 import com.melber17.jokesapp.data.ToFavoriteUi
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -17,13 +18,13 @@ import kotlinx.coroutines.withContext
 class MainViewModel(
     private val repository: Repository<JokeUi, Error>,
     private val toFavorite: Joke.Mapper<JokeUi> = ToFavoriteUi(),
-    private val toBaseUi: Joke.Mapper<JokeUi> = ToBaseUi()
+    private val toBaseUi: Joke.Mapper<JokeUi> = ToBaseUi(),
+    private val dispatchersList: DispatcherList = DispatcherList.Base()
 ) : ViewModel() {
     private var jokeUICallback: JokeUICallback = JokeUICallback.Empty()
-    private lateinit var job: Job
 
      fun getJoke() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchersList.io()) {
             val result = repository.fetch()
             val ui = if (result.isSuccessful()) {
                 result.map(if (result.toFavorite()) toFavorite else toBaseUi)
@@ -31,7 +32,7 @@ class MainViewModel(
                 JokeUi.Failed(result.errorMessage())
             }
 
-            withContext(Dispatchers.Main) {
+            withContext(dispatchersList.ui()) {
                 ui.show(jokeUICallback)
             }
         }
@@ -51,9 +52,9 @@ class MainViewModel(
     }
 
     fun changeJokeStatus() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatchersList.io()) {
             val jokeUi = repository.changeJokeStatus()
-            withContext(Dispatchers.Main) {
+            withContext(dispatchersList.ui()) {
                 jokeUi.show(jokeUICallback)
             }
         }
@@ -67,5 +68,15 @@ interface JokeUICallback {
     class Empty : JokeUICallback {
         override fun provideText(text: String) = Unit
         override fun provideIconResId(iconResId: Int) = Unit
+    }
+}
+
+interface DispatcherList {
+    fun io(): CoroutineDispatcher
+    fun ui(): CoroutineDispatcher
+
+    class Base: DispatcherList {
+        override fun io() = Dispatchers.IO
+        override fun ui() = Dispatchers.Main
     }
 }
