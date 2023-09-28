@@ -6,6 +6,7 @@ import com.melber17.jokesapp.data.cache.CacheDataSource
 import com.melber17.jokesapp.data.cache.ProvideRealm
 import com.melber17.jokesapp.data.cloud.CloudDataSource
 import com.melber17.jokesapp.data.cloud.JokeService
+import com.melber17.jokesapp.presentation.JokeCommunication
 import com.melber17.jokesapp.presentation.MainViewModel
 import com.melber17.jokesapp.presentation.ManageResources
 import io.realm.Realm
@@ -23,6 +24,7 @@ class JokeApp : Application() {
             .build()
         Realm.init(this)
         viewModel = MainViewModel(
+            JokeCommunication.Base(),
             BaseRepository(
                 CloudDataSource.Base(
                     retrofit.create(JokeService::class.java),

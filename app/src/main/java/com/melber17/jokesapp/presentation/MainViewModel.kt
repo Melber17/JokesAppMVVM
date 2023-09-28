@@ -1,6 +1,10 @@
 package com.melber17.jokesapp.presentation
 
 import androidx.annotation.DrawableRes
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.melber17.jokesapp.data.Error
@@ -11,20 +15,24 @@ import com.melber17.jokesapp.data.ToFavoriteUi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
 class MainViewModel(
+    private val communication: JokeCommunication,
     private val repository: Repository<JokeUi, Error>,
     private val toFavorite: Joke.Mapper<JokeUi> = ToFavoriteUi(),
     private val toBaseUi: Joke.Mapper<JokeUi> = ToBaseUi(),
     dispatchersList: DispatcherList = DispatcherList.Base(),
-) : BaseViewModel(dispatchersList) {
-    private var jokeUICallback: JokeUICallback = JokeUICallback.Empty()
+) : BaseViewModel(dispatchersList), Observe<JokeUi> {
+
     private val blockUi: suspend (JokeUi) -> Unit = {
-        it.show(jokeUICallback)
+        communication.map(it)
+    }
+
+    override fun observe(owner: LifecycleOwner, observer: Observer<JokeUi>) {
+        communication.observe(owner, observer)
     }
 
     fun getJoke() = super.handle({
@@ -36,14 +44,6 @@ class MainViewModel(
         }
     }, blockUi)
 
-    override fun onCleared() {
-        super.onCleared()
-        jokeUICallback = JokeUICallback.Empty()
-    }
-
-    fun init(jokeUICallback: JokeUICallback) {
-        this.jokeUICallback = jokeUICallback
-    }
 
     fun chooseFavorite(isFavorite: Boolean) {
         repository.chooseFavorites(isFavorite)
@@ -54,14 +54,31 @@ class MainViewModel(
     }, blockUi)
 }
 
+interface Observe<T: Any> {
+    fun observe(owner: LifecycleOwner, observer: Observer<T>) = Unit
+}
+
+interface Communication <T: Any> : Observe<T> {
+        fun map(data: T)
+
+        abstract class Abstract<T: Any>(private val liveData: MutableLiveData<T> = MutableLiveData()): Communication<T> {
+            override fun map(data: T) {
+              liveData.value = data
+            }
+
+            override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
+               liveData.observe(owner, observer)
+            }
+        }
+}
+
+interface JokeCommunication: Communication<JokeUi> {
+    class Base: Communication.Abstract<JokeUi>(), JokeCommunication
+}
+
 interface JokeUICallback {
     fun provideText(text: String)
     fun provideIconResId(@DrawableRes iconResId: Int)
-
-    class Empty : JokeUICallback {
-        override fun provideText(text: String) = Unit
-        override fun provideIconResId(iconResId: Int) = Unit
-    }
 }
 
 interface DispatcherList {

@@ -15,19 +15,19 @@ import com.melber17.jokesapp.R
          }
      }
 
-        class Base(text: String, punchline: String) : Abstract(
+        data class Base(private val text: String,private val punchline: String) : Abstract(
             text, punchline,
             R.drawable.ic_favorite_empty_48
         ) {
         }
 
-        class Favorite(text: String, punchline: String) : Abstract(
+        data class Favorite(private val text: String, private val punchline: String) : Abstract(
             text, punchline,
             R.drawable.ic_favorite_filled_48
         ) {
         }
 
-        class Failed(text: String) : Abstract(text, "", 0) {
+        data class Failed(private val text: String) : Abstract(text, "", 0) {
         }
 }
 
